@@ -1,0 +1,58 @@
+[
+  {
+    "domain": "apify.com",
+    "snapshotDate": "2025-09-01T00:00:00+00:00",
+    "title": "apify — Example Website",
+    "description": "Automatically generated traffic profile for apify.com.",
+    "category": "computers_electronics_and_technology/computers_electronics_and_technology",
+    "screenshot": "https://site-images.similarcdn.com/image?url=apify.com&t=1&s=1",
+    "globalRank": 18630,
+    "countryRank": {
+      "Country": "US",
+      "CountryCode": "US",
+      "Rank": 840
+    },
+    "categoryRank": "441",
+    "estimatedMonthlyVisits": {
+      "2025-07-01": 2199161,
+      "2025-08-01": 2089977,
+      "2025-09-01": 1911397
+    },
+    "bounceRate": "0.3450",
+    "pagesPerVisit": "9.48",
+    "visits": "1911397",
+    "timeOnSite": "362.21",
+    "topCountryShares": [
+      {
+        "CountryCode": "US",
+        "Value": 0.19
+      },
+      {
+        "CountryCode": "IN",
+        "Value": 0.12
+      },
+      {
+        "CountryCode": "GB",
+        "Value": 0.04
+      }
+    ],
+    "trafficSources": {
+      "Direct": 0.482,
+      "Search": 0.443,
+      "Social": 0.016
+    },
+    "topKeywords": [
+      {
+        "name": "apify",
+        "value": 369720,
+        "cpc": 0.59
+      }
+    ],
+    "isDataFromGA": false,
+    "competitors": [
+      "apify-competitor-1.com",
+      "apify-competitor-2.com",
+      "apify-competitor-3.com"
+    ]
+  }
+]
