@@ -1,0 +1,103 @@
+return visits
+
+def generate_mock_profile(domain: str) -> Dict[str, Any]:
+    """
+    Create a deterministic fake analytics profile for a domain.
+    This makes the entire project runnable without any secrets
+    or external network access.
+    """
+    clean_domain = normalize_domain(domain)
+    seed = _hash_to_int(clean_domain)
+    logger.debug("Generating mock profile for %s with seed %d", clean_domain, seed)
+
+    global_rank = max(1000, seed % 500_000)
+    base_visits = max(50_000, (seed // 10) % 5_000_000)
+    visits = int(base_visits * 0.9)
+
+    # Engagement metrics
+    bounce_rate = _pseudo_random_float(seed, 0.2, 0.7)
+    pages_per_visit = _pseudo_random_float(seed + 1, 2.0, 10.0)
+    time_on_site = _pseudo_random_float(seed + 2, 60.0, 600.0)  # seconds
+
+    # Country distribution
+    country_codes = ["US", "IN", "GB", "DE", "BR", "CA", "FR", "AU"]
+    shares: List[Dict[str, Any]] = []
+    remaining = 1.0
+    for idx, cc in enumerate(country_codes[:4]):
+        if idx == 3:
+            share = max(0.01, remaining)
+        else:
+            frag = _pseudo_random_float(seed + 100 + idx, 0.05, 0.4)
+            share = min(max(0.03, frag), remaining - 0.05)
+        remaining -= share
+        shares.append({"CountryCode": cc, "Value": round(share, 4)})
+
+    # Traffic sources
+    direct = _pseudo_random_float(seed + 200, 0.3, 0.6)
+    search = _pseudo_random_float(seed + 201, 0.2, 0.5)
+    social = _pseudo_random_float(seed + 202, 0.01, 0.1)
+    ref = _pseudo_random_float(seed + 203, 0.01, 0.2)
+    mail = _pseudo_random_float(seed + 204, 0.01, 0.1)
+    total = direct + search + social + ref + mail
+    traffic_sources = {
+        "Direct": round(direct / total, 3),
+        "Search": round(search / total, 3),
+        "Social": round(social / total, 3),
+        "Referral": round(ref / total, 3),
+        "Mail": round(mail / total, 3),
+    }
+
+    # Top keywords
+    base_kw_count = 3 + seed % 3
+    keywords: List[Dict[str, Any]] = []
+    for i in range(base_kw_count):
+        name = f"{clean_domain.split('.')[0]} keyword {i+1}"
+        value_seed = seed + 300 + i
+        value = max(1000, value_seed % 500_000)
+        cpc = round(_pseudo_random_float(seed + 400 + i, 0.1, 5.0), 2)
+        keywords.append({"name": name, "value": value, "cpc": cpc})
+
+    # Competitors
+    competitors = [
+        f"{clean_domain.split('.')[0]}-competitor-{i+1}.com" for i in range(3)
+    ]
+
+    # Category and screenshot
+    categories = [
+        "computers_electronics_and_technology/computers_electronics_and_technology",
+        "business_and_consumers/services",
+        "news_and_media",
+        "ecommerce_and_shopping",
+    ]
+    category = categories[seed % len(categories)]
+    screenshot_url = f"https://site-images.similarcdn.com/image?url={clean_domain}&t=1&s=1"
+
+    # Country rank: pick main from topCountries first element
+    main_country = shares[0]["CountryCode"]
+    country_rank = {
+        "Country": main_country,
+        "CountryCode": main_country,
+        "Rank": max(100, seed % 50_000),
+    }
+
+    profile = {
+        "domain": clean_domain,
+        "title": f"{clean_domain} — Example Website",
+        "description": f"Automatically generated traffic profile for {clean_domain}.",
+        "category": category,
+        "screenshot": screenshot_url,
+        "global_rank": global_rank,
+        "country_rank": country_rank,
+        "category_rank": str(max(1, seed % 2000)),
+        "estimated_monthly_visits": _build_estimated_visits(base_visits),
+        "bounce_rate": bounce_rate,
+        "pages_per_visit": pages_per_visit,
+        "visits": visits,
+        "time_on_site": time_on_site,
+        "top_country_shares": shares,
+        "traffic_sources": traffic_sources,
+        "top_keywords": keywords,
+        "competitors": competitors,
+    }
+
+    return profile
